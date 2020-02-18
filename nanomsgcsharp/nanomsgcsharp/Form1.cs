@@ -108,7 +108,7 @@ namespace nanomsgcsharp
             try
             {
                 surveyorSocket = new Lazy<SurveyorSocket>(() => new SurveyorSocket());
-                surveyorSocket.Value.Bind("tcp://*:8002");
+                surveyorSocket.Value.Bind("tcp://*:8005");
 
                 new Task(() =>
                 {
@@ -145,7 +145,7 @@ namespace nanomsgcsharp
             try
             {
                 publishSocket = new Lazy<PublishSocket>(() => new PublishSocket());
-                publishSocket.Value.Bind("tcp://*:8002");
+                publishSocket.Value.Bind("tcp://*:8004");
             }
             catch (Exception ex)
             {
@@ -195,8 +195,8 @@ namespace nanomsgcsharp
             try
             {
                 busSocket = new Lazy<BusSocket>(() => new BusSocket());
-                busSocket.Value.Bind("ipc://server");
-                busSocket.Value.Connect("ipc://client");
+                busSocket.Value.Bind("tcp://*:8002");
+                busSocket.Value.Connect("tcp://192.168.3.2:8002");
                 new Task(() =>
                 {
                     while (busSocket.IsValueCreated)
@@ -224,7 +224,7 @@ namespace nanomsgcsharp
             try
             {
                 replySocket = new Lazy<ReplySocket>(() => new ReplySocket());
-                replySocket.Value.Bind("tcp://*:8001");
+                replySocket.Value.Bind("tcp://*:8003");
                 new Task(() =>
                 {
                     while (replySocket.IsValueCreated)
@@ -256,6 +256,12 @@ namespace nanomsgcsharp
                     break;
                 case ENanoType.PUBSUB:
                     string pubsubgtr = "这是PUB发送的消息，你收到了吗？";
+                    //StringBuilder sb = new StringBuilder();
+                    //for(int i = 0; i < 10000; i++)
+                    //{
+                    //    sb.Append("这是PUB发送的消息" + i);
+                    //}
+                    //pubsubgtr = sb.ToString();
                     //设置发送的前缀代表主题
                     string prestr = "PUBSUB";
                     publishSocket.Value.Send(Encoding.UTF8.GetBytes(prestr + pubsubgtr));

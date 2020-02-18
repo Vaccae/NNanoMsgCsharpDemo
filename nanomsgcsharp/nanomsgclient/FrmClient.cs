@@ -84,8 +84,8 @@ namespace nanomsgclient
                         break;
                     case ENanoType.BUS:
                         busSocket = new Lazy<BusSocket>(() => new BusSocket());
-                        busSocket.Value.Bind("ipc://client");
-                        busSocket.Value.Connect("ipc://server");
+                        busSocket.Value.Bind("tcp://*:8002");
+                        busSocket.Value.Connect("tcp://localhost:8002");
                     
                         new Task(() =>
                         {
@@ -102,14 +102,14 @@ namespace nanomsgclient
                         break;
                     case ENanoType.REQREP:
                         requestSocket = new Lazy<RequestSocket>(() => new RequestSocket());
-                        requestSocket.Value.Connect("tcp://localhost:8001");
+                        requestSocket.Value.Connect("tcp://localhost:8003");
                         break;
                     case ENanoType.PUBSUB:
                         subscribeSocket = new Lazy<SubscribeSocket>(() => new SubscribeSocket());
                         //一定要指定订阅的主题前缀，指定为空订阅所有主题,否则收不到
                         subscribeSocket.Value.Subscribe("PUBSUB");
 
-                        subscribeSocket.Value.Connect("tcp://localhost:8002");
+                        subscribeSocket.Value.Connect("tcp://localhost:8004");
 
                         new Task(() =>
                         {
@@ -125,7 +125,7 @@ namespace nanomsgclient
                         break;
                     case ENanoType.SURVEY:
                         respondentSocket = new Lazy<RespondentSocket>(() => new RespondentSocket());
-                        respondentSocket.Value.Connect("tcp://localhost:8002");
+                        respondentSocket.Value.Connect("tcp://localhost:8005");
                         new Task(() =>
                         {
                             while (respondentSocket.IsValueCreated)
@@ -172,7 +172,7 @@ namespace nanomsgclient
                         {
                             //发送数据
                             pairSocket.Value.Send(Encoding.UTF8.GetBytes(inputstr));
-
+                            TextShow(inputstr);
                             //接收数据
                             byte[] buffer = pairSocket.Value.Receive();
                             TextShow(Encoding.UTF8.GetString(buffer));
